@@ -1,0 +1,100 @@
+import PlayOptions from "../components/Queue/PlayOptions";
+import SearchMain from "../components/Search-Bar/Search-Main";
+import { useLoaderData, Outlet } from "react-router-dom";
+import { useState, useEffect, useRef } from "react";
+import io from "socket.io-client";
+
+// const loader = async () => {
+//    const [section1, section2, section3] = await Promise.all([
+//       fetchSection1(),
+//       fetchSection2()
+//       fetchSection3()
+//    ]);
+//    return json({ section1, section2, section3 });
+// }
+
+async function fetchVoterId() {
+  const response = await fetch("/user/profile/", { method: "GET" })
+    .then((res) => res.json())
+    .then((data) => data.username);
+  return response;
+}
+
+export async function loader() {
+  const [voter_id] = await Promise.all([fetchVoterId()]);
+  return { voter_id };
+}
+
+export default function Party() {
+  const { voter_id } = useLoaderData();
+  const socketRef = useRef();
+  const [state, setState] = useState(null);
+  const [trackName, setTrackName] = useState(null);
+  const [trackArtist, setTrackArtist] = useState(null);
+
+  // const sendWebPlaybackState = (state) => {
+  //   socketRef.current.emit("PlaybackState", state);
+  // };
+
+  useEffect(() => {
+    async function connect() {
+      socketRef.current = io.connect("/");
+    }
+    connect();
+    socketRef.current.on("PlaybackState:Latest", (state) => {
+      setState(state);
+    });
+  }),
+    [];
+
+  useEffect(() => {
+    if (!state) return;
+    setTrackName(state.track_window.current_track.name);
+    setTrackArtist(state.track_window.current_track.artists[0].name);
+  }),
+    [state];
+
+  return (
+    <div className="drawer drawer-end">
+      <input id="my-drawer-4" type="checkbox" className="drawer-toggle" />
+      <div className="drawer-content min-h-screen flex flex-col">
+        <div className="flex flex-col sm:flex-row justify-between p-4 border-b-slate-700/50 ">
+          <p className="font-extrabold bg-gradient-to-br from-purple-400 to-red-400 bg-clip-text text-transparent text-2xl">
+            DEMOCRATIC SPOTIFY
+          </p>
+          <p className="text-xs">Voter ID: {voter_id}</p>
+        </div>
+        <div className="flex flex-col justify-center h-full">
+          <div className="flex flex-col lg:flex-row m-4 justify-center">
+            <Outlet/>
+            <PlayOptions trackName={trackName} trackArtist={trackArtist} />
+          </div>
+        </div>
+        <div className="fixed bottom-0 right-0 m-6">
+          <label htmlFor="my-drawer-4" className="drawer-button cursor-pointer">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="64"
+              height="64"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              className="hover:text-gray-300 text-green-500"
+            >
+              <path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm6 13h-5v5h-2v-5h-5v-2h5v-5h2v5h5v2z" />
+            </svg>
+          </label>
+        </div>
+      </div>
+      <div className="drawer-side">
+        <label
+          htmlFor="my-drawer-4"
+          aria-label="close sidebar"
+          className="drawer-overlay"
+        ></label>
+        <div className="menu p-4 w-80 min-h-full bg-base-200 text-base-content">
+          <SearchMain />
+        </div>
+      </div>
+    </div>
+  );
+}
