@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
-import { useLoaderData, useOutletContext } from "react-router-dom";
+import { useLoaderData } from "react-router-dom";
 import Playback from "./Playback";
+import PlayOptions from "./PlayOptions";
+import socket from "../Socket";
 
 async function fetchAuth() {
   const response = await fetch("/api/party/auth")
@@ -19,6 +21,8 @@ export default function AdminPlayback() {
   const { auth_token } = useLoaderData();
   const [player, setPlayer] = useState(null);
   const [state, setState] = useState(null);
+  const [trackName, setTrackName] = useState(null);
+  const [trackArtist, setTrackArtist] = useState(null);
   const [active, setActive] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [img, setImg] = useState(null);
@@ -26,6 +30,14 @@ export default function AdminPlayback() {
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
   const [durationms, setDurationms] = useState(0);
+
+  const sendWebPlaybackState = (state) => {
+    if (!socket) {
+      console.log("admin socket NULL", socket)
+      return;
+    }
+    socket.emit("PlaybackState:Latest", state);
+  };
 
   const handlePlay = () => {
     player.togglePlay();
@@ -37,6 +49,7 @@ export default function AdminPlayback() {
     console.log("next button clicked");
   };
 
+  // Spotify SDK
   useEffect(() => {
     const script = document.createElement("script");
     script.src = "https://sdk.scdn.co/spotify-player.js";
@@ -88,10 +101,12 @@ export default function AdminPlayback() {
       return;
     }
     setImg(state.track_window.current_track.album.images[0].url);
-    console.log("IMG", img);
+    setTrackName(state.track_window.current_track.name);
+    setTrackArtist(state.track_window.current_track.artists[0].name);
     setPaused(state.paused);
     setProgress(parseInt(state.position));
     setDurationms(state.duration);
+    sendWebPlaybackState(state);
   }, [state]);
 
   let loading = (
@@ -105,7 +120,6 @@ export default function AdminPlayback() {
       <div>
         <div>
           <b>
-            {" "}
             Instance not active. Transfer your playback using your Spotify app{" "}
           </b>
         </div>
@@ -121,12 +135,15 @@ export default function AdminPlayback() {
     return notActive;
   } else {
     return (
-      <Playback
-        handlePlay={handlePlay}
-        handleNext={handleNext}
-        trackImg={img}
-        paused={paused}
-      />
+      <>
+        <Playback
+          handlePlay={handlePlay}
+          handleNext={handleNext}
+          trackImg={img}
+          paused={paused}
+        />
+        <PlayOptions trackName={trackName} trackArtist={trackArtist} />
+      </>
     );
   }
 }

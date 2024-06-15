@@ -16,6 +16,5 @@ const partyRoutes = require('./routes/party');
 
 router.use('/auth', authRoutes);
 router.use('/player', readyStatusRoutes);
-// router.use('/party', isAuthenticated, partyRoutes);
 router.use('/party', partyRoutes);
 module.exports = router;

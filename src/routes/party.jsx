@@ -1,8 +1,5 @@
-import PlayOptions from "../components/Queue/PlayOptions";
-import SearchMain from "../components/Search-Bar/Search-Main";
 import { useLoaderData, Outlet } from "react-router-dom";
-import { useState, useEffect, useRef } from "react";
-import io from "socket.io-client";
+import SearchMain from "../components/Search-Bar/Search-Main";
 
 // const loader = async () => {
 //    const [section1, section2, section3] = await Promise.all([
@@ -27,32 +24,6 @@ export async function loader() {
 
 export default function Party() {
   const { voter_id } = useLoaderData();
-  const socketRef = useRef();
-  const [state, setState] = useState(null);
-  const [trackName, setTrackName] = useState(null);
-  const [trackArtist, setTrackArtist] = useState(null);
-
-  // const sendWebPlaybackState = (state) => {
-  //   socketRef.current.emit("PlaybackState", state);
-  // };
-
-  useEffect(() => {
-    async function connect() {
-      socketRef.current = io.connect("/");
-    }
-    connect();
-    socketRef.current.on("PlaybackState:Latest", (state) => {
-      setState(state);
-    });
-  }),
-    [];
-
-  useEffect(() => {
-    if (!state) return;
-    setTrackName(state.track_window.current_track.name);
-    setTrackArtist(state.track_window.current_track.artists[0].name);
-  }),
-    [state];
 
   return (
     <div className="drawer drawer-end">
@@ -66,8 +37,7 @@ export default function Party() {
         </div>
         <div className="flex flex-col justify-center h-full">
           <div className="flex flex-col lg:flex-row m-4 justify-center">
-            <Outlet/>
-            <PlayOptions trackName={trackName} trackArtist={trackArtist} />
+            <Outlet />
           </div>
         </div>
         <div className="fixed bottom-0 right-0 m-6">

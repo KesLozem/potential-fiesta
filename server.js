@@ -38,10 +38,14 @@ instrument(io, {
   mode: "development",
 });
 
+// Socket events
+let playbackState = {};
 
 io.on('connection', (socket) => {
-  socket.on('PlaybackState', (state) => {
-    io.emit('PlaybackState:Latest', state);
+  io.emit('PlaybackState', playbackState);
+  socket.on('PlaybackState:Latest', (state) => {
+    playbackState = state;
+    io.emit('PlaybackState', state);
   });
 
   console.log('a user connected');

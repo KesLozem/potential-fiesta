@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function MusicControls({ handlePlay, handleNext, paused }) {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -11,6 +11,11 @@ export default function MusicControls({ handlePlay, handleNext, paused }) {
   const handleSkipping = () => {
     handleNext();
   };
+
+  useEffect(() => {
+    console.log("paused", paused);
+    setIsPlaying(paused);
+  }, [paused]);
 
   return (
     <ul className="menu menu-horizontal">
@@ -26,11 +31,11 @@ export default function MusicControls({ handlePlay, handleNext, paused }) {
             strokeWidth={2}
           >
             {isPlaying ? (
-              // Pause Icon
-              <path d="M5,21 h-4 v-20 h6 v20 m12,-20 h-4 v20 h6 v-20 Z" />
-            ) : (
               // Play Icon
               <path d="M3 22v-20l18 10-18 10z" />
+            ) : (
+              // Pause Icon
+              <path d="M5,21 h-4 v-20 h6 v20 m12,-20 h-4 v20 h6 v-20 Z" />
             )}
           </svg>
         </a>

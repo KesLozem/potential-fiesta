@@ -1,4 +1,4 @@
-import SongQueue from "./SongQueue";
+import SongQueue from "../Queue/SongQueue";
 
 export default function PlayOptions({trackName, trackArtist}) {
   return (
@@ -7,7 +7,9 @@ export default function PlayOptions({trackName, trackArtist}) {
         <h1 className="text-white font-bold text-4xl text-pretty">
           {trackName ? trackName : "No song playing"}
         </h1>
-        <h4 className="text-white text-2xl">{trackArtist ? trackArtist : "......"}</h4>
+        <h4 className="text-white text-2xl">
+          {trackArtist ? trackArtist : "......"}
+          </h4>
       </div>
       <div className="mb-10">
         <p>
