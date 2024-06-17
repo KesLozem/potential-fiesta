@@ -11,10 +11,10 @@ router.use(passport.initialize());
 router.use(passport.session());
 
 const authRoutes = require('./routes/auth');
-const readyStatusRoutes = require('./routes/player');
+const playerRoutes = require('./routes/player');
 const partyRoutes = require('./routes/party');
 
 router.use('/auth', authRoutes);
-router.use('/player', readyStatusRoutes);
+router.use('/player', playerRoutes);
 router.use('/party', partyRoutes);
 module.exports = router;

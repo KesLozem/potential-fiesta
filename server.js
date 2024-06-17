@@ -4,6 +4,7 @@
 const express = require('express');
 const path = require('path');
 const cors = require('cors');
+const bodyParser = require('body-parser');
 const { instrument } = require("@socket.io/admin-ui");
 const session = require('express-session');
 const sqlite3 = require('sqlite3').verbose();
@@ -56,6 +57,8 @@ io.on('connection', (socket) => {
 
 // middleware
 app.use(cors());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(session({
   genid: (req) => {
     console.log('SESSION ID', req.sessionID);
@@ -72,7 +75,7 @@ app.use(session({
 // routes
 const apiRoutes = require('./routing/api/root');
 const partyRoutes = require('./routing/party/root');
-const userRoutes = require('./routing/user/root');
+const userRoutes = require('./routing/user/root')
 
 app.use('/api', apiRoutes);
 app.use('/party', partyRoutes);

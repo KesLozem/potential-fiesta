@@ -3,9 +3,9 @@ const router = express.Router();
 
 const { 
     getOnlineStatus,
-    getAuthToken
+    putTransferDevice
  } = require('../controllers/player.controller');
 
 router.get('/online', getOnlineStatus);
-
+router.put('/device', putTransferDevice)
 module.exports = router;

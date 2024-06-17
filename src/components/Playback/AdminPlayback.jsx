@@ -3,6 +3,7 @@ import { useLoaderData } from "react-router-dom";
 import Playback from "./Playback";
 import PlayOptions from "./PlayOptions";
 import socket from "../Socket";
+import axios from "axios";
 
 async function fetchAuth() {
   const response = await fetch("/api/party/auth")
@@ -70,6 +71,10 @@ export default function AdminPlayback() {
       // event listeners
       player.addListener("ready", ({ device_id }) => {
         console.log("Ready with Device ID", device_id);
+        axios.put("/api/player/device", { device_id: device_id })
+        .catch((error) => {
+          console.log(`ERROR_AXIOS_REQUEST_transferPlayback: ${error.code} ${error.message}`);
+        });
       });
 
       player.addListener("not_ready", ({ device_id }) => {
