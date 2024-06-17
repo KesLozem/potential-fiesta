@@ -2,7 +2,7 @@ import axios from "axios";
 import { getAccessToken } from "../credentials.db";
 
 export async function transferPlayback(req, res) {
-    let device_id = req.body.device_id;
+    let device_id =[req.body.device_id];
     let authOptions = {
         url: `https://api.spotify.com/v1/me/player`,
         method: 'put',

@@ -43,7 +43,9 @@ instrument(io, {
 let playbackState = {};
 
 io.on('connection', (socket) => {
-  io.emit('PlaybackState', playbackState);
+  socket.on('PlaybackState:Request', () => {
+    socket.emit('PlaybackState', playbackState);
+  });
   socket.on('PlaybackState:Latest', (state) => {
     playbackState = state;
     io.emit('PlaybackState', state);

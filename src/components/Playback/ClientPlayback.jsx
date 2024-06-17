@@ -20,18 +20,16 @@ export default function ClientPlayback() {
     console.log("next button clicked");
   };
 
-  const handleLatestPlaybackState = () => {
-    socket.on("PlaybackState", (state) => {
-      setState(state);
-    });
-  };
-
   useEffect(() => {
     if (!socket) {
       console.log("client socket is null", socket);
       return;
     }
-    handleLatestPlaybackState();
+    // Retrieve current playback state
+    socket.on("PlaybackState", (state) => {
+      setState(state);
+    });
+    socket.emit("PlaybackState:Request")
     return () => {
       socket.off("PlaybackState");
     };
