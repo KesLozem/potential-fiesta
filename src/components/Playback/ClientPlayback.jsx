@@ -26,15 +26,16 @@ export default function ClientPlayback() {
       return;
     }
     // Retrieve current playback state
+    socket.emit("PlaybackState:Request")
     socket.on("PlaybackState", (state) => {
       setState(state);
-    });
-    socket.emit("PlaybackState:Request")
+    });  
+
     return () => {
       socket.off("PlaybackState");
     };
-  }),
-    [];
+  },
+    []);
 
   useEffect(() => {
     if (!state) {
@@ -44,8 +45,8 @@ export default function ClientPlayback() {
     setPaused(state.paused);
     setTrackName(state.track_window.current_track.name);
     setTrackArtist(state.track_window.current_track.artists[0].name);
-  }),
-    [state];
+  },
+    [state]);
 
   return (
     <>
