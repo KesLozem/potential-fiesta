@@ -14,6 +14,11 @@ async function fetchVoterId() {
   const response = await fetch("/user/profile/", { method: "GET" })
     .then((res) => res.json())
     .then((data) => data.username);
+  if(!response) {
+    return await fetch("/user/profile/admin" , { method: "GET" })
+      .then((res) => res.json())
+      .then((data) => data.username);
+  }
   return response;
 }
 

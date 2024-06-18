@@ -13,7 +13,7 @@ const spotifyStrategy = new SpotifyStrategy(
     },
     (accessToken, refreshToken, profile, done) => {
         process.nextTick(function () {
-            console.log("TOKEN", accessToken, "PROFILE", profile)
+            console.log("TOKEN", accessToken, "PROFILE", profile);
             setAccessToken(accessToken);
             setRefreshToken(refreshToken);
             return done(null, profile);

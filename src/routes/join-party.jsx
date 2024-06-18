@@ -27,7 +27,7 @@ export default function JoinParty() {
 
   return (
     <div className="bg-stone-900 flex flex-col items-center justify-center h-screen">
-      <h1 className="text-6xl font-bold text-white">Join the Party</h1>
+      <h1 className="text-6xl font-bold text-white text-center">Join the Party</h1>
       <PartyStatus party_status={status} />
       <div className="flex">
         <Form method="post" id="username-form">
