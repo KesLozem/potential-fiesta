@@ -34,7 +34,7 @@ export default function Party() {
     <div className="drawer drawer-end">
       <input id="my-drawer-4" type="checkbox" className="drawer-toggle" />
       <div className="drawer-content min-h-screen flex flex-col">
-        <div className="flex flex-col sm:flex-row justify-between p-4 border-b-slate-700/50 ">
+        <div className="z-10 flex flex-col sm:flex-row justify-between p-4 border-b-slate-700/50 ">
           <p className="font-extrabold bg-gradient-to-br from-purple-400 to-red-400 bg-clip-text text-transparent text-2xl">
             DEMOCRATIC SPOTIFY
           </p>
@@ -45,7 +45,7 @@ export default function Party() {
             <Outlet />
           </div>
         </div>
-        <div className="fixed bottom-0 right-0 m-6">
+        <div className="z-20 fixed bottom-0 right-0 m-6">
           <label htmlFor="my-drawer-4" className="drawer-button cursor-pointer">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -60,7 +60,7 @@ export default function Party() {
           </label>
         </div>
       </div>
-      <div className="drawer-side">
+      <div className="z-20 drawer-side">
         <label
           htmlFor="my-drawer-4"
           aria-label="close sidebar"

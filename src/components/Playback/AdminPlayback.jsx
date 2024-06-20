@@ -1,8 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useLoaderData } from "react-router-dom";
 import Playback from "./Playback";
 import PlayOptions from "./PlayOptions";
 import socket from "../Socket";
+import tickerjs from "./ticker";
 import axios from "axios";
 
 async function fetchAuth() {
@@ -30,11 +31,13 @@ export default function AdminPlayback() {
   const [paused, setPaused] = useState(true);
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
-  const [durationms, setDurationms] = useState(0);
+  const [percentage, setPercentage] = useState(0);
+  const [uri, setUri] = useState(null);
+  const worker = useRef();
 
   const sendWebPlaybackState = (state) => {
     if (!socket) {
-      console.log("admin socket NULL", socket)
+      console.log("admin socket NULL", socket);
       return;
     }
     socket.emit("PlaybackState:Latest", state);
@@ -59,7 +62,7 @@ export default function AdminPlayback() {
 
     window.onSpotifyWebPlaybackSDKReady = () => {
       const player = new window.Spotify.Player({
-        name: "Spotbot 👾",
+        name: "Democratic Spotify 👾",
         getOAuthToken: (cb) => {
           cb(auth_token);
         },
@@ -71,10 +74,13 @@ export default function AdminPlayback() {
       // event listeners
       player.addListener("ready", ({ device_id }) => {
         console.log("Ready with Device ID", device_id);
-        axios.put("/api/player/device", { device_id: device_id })
-        .catch((error) => {
-          console.log(`ERROR_AXIOS_REQUEST_transferPlayback: ${error.code} ${error.message}`);
-        });
+        axios
+          .put("/api/player/device", { device_id: device_id })
+          .catch((error) => {
+            console.log(
+              `ERROR_AXIOS_REQUEST_transferPlayback: ${error.code} ${error.message}`
+            );
+          });
       });
 
       player.addListener("not_ready", ({ device_id }) => {
@@ -110,9 +116,53 @@ export default function AdminPlayback() {
     setTrackArtist(state.track_window.current_track.artists[0].name);
     setPaused(state.paused);
     setProgress(parseInt(state.position));
-    setDurationms(state.duration);
+    setDuration(state.duration);
+    setUri(state.track_window.current_track.uri);
+    setPercentage((progress / duration) * 100);
     sendWebPlaybackState(state);
+
+     // start ticker after state changes
+    worker.current.postMessage("start");
+
+    return () => {
+      worker.current.postMessage("stop");
+    };
+
   }, [state]);
+
+    useEffect(() => {
+    // create new web worker and terminate so that only 1 is active at a time
+    worker.current = new Worker(tickerjs);
+    return () => {
+      worker.current.terminate();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (paused) {
+      // console.log("Sending stop message to worker...")
+      worker.current.postMessage("stop");
+      console.log(paused)
+    } else {
+      // console.log("Sending start message to worker...")
+      worker.current.postMessage("start");
+      worker.current.onmessage = ({ data: { time } }) => {
+        // console.log("paused status", paused, "ticker time", time);
+        setPercentage(((progress + time)/duration) * 100)
+      };
+    }
+    return () => {
+      worker.current.postMessage("stop");
+    };
+  }, [paused, progress]);
+
+  useEffect(() => {
+    // On new song reset the ticker
+    worker.current.postMessage("next-song");
+    return () => {
+      worker.current.postMessage("stop");
+    };
+  }, [uri])
 
   let loading = (
     <div>
@@ -141,6 +191,10 @@ export default function AdminPlayback() {
   } else {
     return (
       <>
+        <div
+          className="absolute top-0 left-0 bg-zinc-900 min-h-full"
+          style={{ width: `${percentage}%` }}
+        ></div>
         <Playback
           handlePlay={handlePlay}
           handleNext={handleNext}
