@@ -1,6 +1,7 @@
 const { getIsOnline } = require("../services/player/player-online.service");
 const { transferPlayback } = require("../services/player/transfer-playback.service");
 const { getQueue } = require("../services/player/get-queue.service");
+const { insertQueue } = require("../services/player/insert-queue.service");
 
 export async function getOnlineStatus(req, res) {
     try {
@@ -57,6 +58,24 @@ export async function get_Queue(req, res) {
                 })
             } 
         });
+    } catch (error) {
+        return res.status(500).send(
+            {
+                error: {
+                    status: error.status,
+                    code: error.code,
+                    message: error.message,
+                    request: error.config
+                }
+            }
+        );
+    }
+}
+
+export async function insert_queue(req, res){
+    try {
+        const track = await insertQueue(req, res);
+        return res.status(204).send({ track: track });
     } catch (error) {
         return res.status(500).send(
             {
