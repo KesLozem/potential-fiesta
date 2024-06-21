@@ -3,9 +3,11 @@ const router = express.Router();
 
 const { 
     getOnlineStatus,
-    putTransferDevice
+    putTransferDevice,
+    get_Queue
  } = require('../controllers/player.controller');
 
 router.get('/online', getOnlineStatus);
-router.put('/device', putTransferDevice)
+router.put('/device', putTransferDevice);
+router.get('/queue', get_Queue);
 module.exports = router;
