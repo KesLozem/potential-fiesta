@@ -1,0 +1,12 @@
+// ROUTE: .../API/PLAYLIST
+
+const express = require('express');
+const router = express.Router();
+const {
+    get_playlist,
+} = require('../controllers/playlist.controller');
+
+router.get('/', get_playlist);
+
+
+module.exports = router;
