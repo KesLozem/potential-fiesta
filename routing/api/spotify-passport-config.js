@@ -1,7 +1,7 @@
 // Passport will use this strategy to authenticate users with Spotify.
 // Auth will also be used to send requests to spotify api.
 
-const { setAccessToken, setRefreshToken } = require('./services/credentials.db');
+const { setAccessToken, setRefreshToken, setUserID } = require('./services/credentials.db');
 
 const SpotifyStrategy = require('passport-spotify').Strategy;
 
@@ -16,6 +16,7 @@ const spotifyStrategy = new SpotifyStrategy(
             console.log("TOKEN", accessToken, "PROFILE", profile);
             setAccessToken(accessToken);
             setRefreshToken(refreshToken);
+            setUserID(profile.id);
             return done(null, profile);
         });
     },
