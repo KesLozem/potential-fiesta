@@ -1,8 +1,8 @@
 import { getPlaylist } from "../services/playlist/get-playlist.service";
 import { postPlaylist } from "../services/playlist/post-newPlaylist.service";
 import { setPlaylistID } from "../services/playlist/playlist-utls";
-import { getPlaylistID } from "../services/playlist/playlist-utls";
 import { insertTrack } from "../services/playlist/insert-track.service";
+import { getTracks } from "../services/playlist/get-tracks.service";
 
 export async function get_playlist(req, res) {
     try {
@@ -45,6 +45,24 @@ export async function add_track(req, res) {
     try {
         const track = await insertTrack(req, res);
         return res.status(201).send({ track: track });
+    } catch (error) {
+        return res.status(500).send(
+            {
+                error: {
+                    status: error.status,
+                    code: error.code,
+                    message: error.message,
+                    request: error.config
+                }
+            }
+        );
+    }
+}
+
+export async function get_tracks(req, res){
+    try {
+        const tracks = await getTracks(req, res);
+        return res.status(200).send({ tracks: tracks });
     } catch (error) {
         return res.status(500).send(
             {

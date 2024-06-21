@@ -142,7 +142,6 @@ export default function AdminPlayback() {
     if (paused) {
       // console.log("Sending stop message to worker...")
       worker.current.postMessage("stop");
-      console.log(paused)
     } else {
       // console.log("Sending start message to worker...")
       worker.current.postMessage("start");

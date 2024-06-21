@@ -5,12 +5,15 @@ const router = express.Router();
 const {
     get_playlist,
     create_playlist,
-    add_track
+    add_track,
+    get_tracks
 } = require('../controllers/playlist.controller');
 
 router.get('/', get_playlist);
 router.post('/', create_playlist);
+router.get('/track', get_tracks);
 router.post('/track', add_track);
+
 
 
 module.exports = router;
