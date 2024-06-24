@@ -6,10 +6,10 @@ import tickerjs from "./ticker.js"
 
 export default function ClientPlayback() {
   const [state, setState] = useState(null);
-  const [img, setImg] = useState(null);
+  const [img, setImg] = useState("https://via.placeholder.com/300");
   const [paused, setPaused] = useState(true);
-  const [trackName, setTrackName] = useState(null);
-  const [trackArtist, setTrackArtist] = useState(null);
+  const [trackName, setTrackName] = useState("No track playing");
+  const [trackArtist, setTrackArtist] = useState("No artist");
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
   const [percentage, setPercentage] = useState(0);
@@ -43,7 +43,7 @@ export default function ClientPlayback() {
   }, []);
 
   useEffect(() => {
-    if (!state) {
+    if (!state || !state.track_window) {
       return;
     }
     setImg(state.track_window.current_track.album.images[0].url);

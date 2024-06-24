@@ -1,3 +1,4 @@
+import { useRef, useState, useEffect } from "react";
 import { useLoaderData, Outlet } from "react-router-dom";
 import SearchMain from "../components/Search-Bar/Search-Main";
 
@@ -14,8 +15,8 @@ async function fetchVoterId() {
   const response = await fetch("/user/profile/", { method: "GET" })
     .then((res) => res.json())
     .then((data) => data.username);
-  if(!response) {
-    return await fetch("/user/profile/admin" , { method: "GET" })
+  if (!response) {
+    return await fetch("/user/profile/admin", { method: "GET" })
       .then((res) => res.json())
       .then((data) => data.username);
   }
@@ -29,10 +30,30 @@ export async function loader() {
 
 export default function Party() {
   const { voter_id } = useLoaderData();
+  const [searchOpen, setSearchOpen] = useState(false)
+  const addSongRef = useRef(null);
+
+  const handleClick = () => setSearchOpen(!searchOpen)
+
+  const handleSearchKeyDown = (e) => {
+    if (e.key === "Escape") {
+      setSearchOpen(false);
+    }
+
+    if (e.key === "Enter") {
+      setSearchOpen(true);
+    }
+  }
+
+  useEffect(() => {
+    window.addEventListener("keydown", handleSearchKeyDown)
+    return () => window.removeEventListener("keydown", handleSearchKeyDown)
+  }
+  , [])
 
   return (
     <div className="drawer drawer-end">
-      <input id="my-drawer-4" type="checkbox" className="drawer-toggle" />
+      <input onClick={handleClick} id="my-drawer-4" type="checkbox" className="drawer-toggle" checked={searchOpen} readOnly/>
       <div className="drawer-content min-h-screen flex flex-col">
         <div className="z-10 flex flex-col sm:flex-row justify-between p-4 border-b-slate-700/50 ">
           <p className="font-extrabold bg-gradient-to-br from-purple-400 to-red-400 bg-clip-text text-transparent text-2xl">
@@ -46,7 +67,11 @@ export default function Party() {
           </div>
         </div>
         <div className="z-20 fixed bottom-0 right-0 m-6">
-          <label htmlFor="my-drawer-4" className="drawer-button cursor-pointer">
+          <label
+            ref={addSongRef}
+            htmlFor="my-drawer-4"
+            className="drawer-button cursor-pointer"
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="64"
@@ -67,7 +92,7 @@ export default function Party() {
           className="drawer-overlay"
         ></label>
         <div className="menu p-4 w-80 min-h-full bg-base-200 text-base-content">
-          <SearchMain />
+          <SearchMain addSongRef={addSongRef} searchOpen={searchOpen} />
         </div>
       </div>
     </div>

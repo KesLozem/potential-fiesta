@@ -1,10 +1,39 @@
+import { useEffect, useRef } from "react";
 import CardResults from "./Card-Results";
 
-export default function SearchMain() {
+export default function SearchMain({ addSongRef, searchOpen }) {
+  const inputRef = useRef(null);
+
+  useEffect(() => {
+    // Ensures that search bar is reset when add song button is clicked
+    if (!addSongRef.current & !inputRef.current) return;
+    addSongRef.current.addEventListener("click", () => {
+      inputRef.current.value = "";
+    });
+    return () => {
+      addSongRef.current.removeEventListener("click", () => {
+        inputRef.current.value = "";
+      });
+    };
+  }, []);
+
+  useEffect(() => {
+      if (searchOpen) {
+        // Allowing time for the drawer to open before focusing on the input
+        setTimeout(() => inputRef.current.focus(), 250);
+        inputRef.current.value = "";
+      }
+  }, [searchOpen])
+
   return (
     <div className="flex flex-col items-center gap-y-2">
       <label className="input input-bordered flex items-center w-full">
-        <input type="text" className="grow" placeholder="Search" />
+        <input
+          ref={inputRef}
+          type="text"
+          className="grow"
+          placeholder="Search"
+        />
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 16 16"
@@ -18,9 +47,9 @@ export default function SearchMain() {
           />
         </svg>
       </label>
-        <CardResults />
-                <CardResults />
-        <CardResults />
+      <CardResults />
+      <CardResults />
+      <CardResults />
     </div>
   );
 }
