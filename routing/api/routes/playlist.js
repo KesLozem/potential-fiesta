@@ -6,13 +6,15 @@ const {
     get_playlist,
     create_playlist,
     add_track,
-    get_tracks
+    get_tracks,
+    search_dedicated_playlist
 } = require('../controllers/playlist.controller');
 
 router.get('/', get_playlist);
 router.post('/', create_playlist);
 router.get('/track', get_tracks);
 router.post('/track', add_track);
+router.get('/id', search_dedicated_playlist);
 
 
 

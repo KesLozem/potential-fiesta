@@ -3,6 +3,7 @@ import { postPlaylist } from "../services/playlist/post-newPlaylist.service";
 import { setPlaylistID } from "../services/playlist/playlist-utls";
 import { insertTrack } from "../services/playlist/insert-track.service";
 import { getTracks } from "../services/playlist/get-tracks.service";
+import { searchDedicatedPlaylist } from "../services/playlist/search-dedicated.service";
 
 export async function get_playlist(req, res) {
     try {
@@ -38,7 +39,6 @@ export async function get_playlist(req, res) {
 export async function create_playlist(req, res) {
     try {
         const playlist = await postPlaylist(req, res);
-        setPlaylistID(playlist.id);
         return res.status(201).send({ playlist: playlist });
     } catch (error) {
         return res.status(500).send(
@@ -92,6 +92,26 @@ export async function get_tracks(req, res){
                     }
                 })
             }  
+        });
+    } catch (error) {
+        return res.status(500).send(
+            {
+                error: {
+                    status: error.status,
+                    code: error.code,
+                    message: error.message,
+                    request: error.config
+                }
+            }
+        );
+    }
+}
+
+export async function search_dedicated_playlist(req, res){
+    try {
+        const id = await searchDedicatedPlaylist(req, res);
+        return res.status(200).send({
+            playlist_id: id,
         });
     } catch (error) {
         return res.status(500).send(

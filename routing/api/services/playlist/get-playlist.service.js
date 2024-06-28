@@ -1,10 +1,12 @@
 import { getAccessToken } from "../credentials.db";
 import axios from "axios";
 
-export async function getPlaylist(req, res) {
+export async function getPlaylist(req, res, i) {
     let offset = 0;
     if (typeof(req.query.offset) !== 'undefined') {
         offset = req.query.offset;
+    } else if (typeof(i) !== 'undefined') {
+        offset = i;
     } else {
         offset = 0;
     }

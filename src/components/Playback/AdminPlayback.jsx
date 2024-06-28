@@ -14,9 +14,16 @@ async function fetchAuth() {
   return response;
 }
 
+async function fetchPlaylistID() {
+  const response = await fetch("/api/playlist/id")
+    .then((res) => res.json())
+    .then((data) => data.playlist_id);
+    return response;
+}
+
 export async function loader() {
-  const [auth_token] = await Promise.all([fetchAuth()]);
-  return { auth_token };
+  const [auth_token, playlist_id] = await Promise.all([fetchAuth(), fetchPlaylistID()]);
+  return { auth_token, playlist_id };
 }
 
 export default function AdminPlayback() {

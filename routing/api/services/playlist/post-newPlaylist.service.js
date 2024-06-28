@@ -1,6 +1,7 @@
 // ROUTE: .../API/PLAYLIST/
 
 import { getAccessToken, getUserID } from "../credentials.db";
+import { setPlaylistID } from "./playlist-utls";
 import { playlistName, playlistDescription, playlistPublic, playlistCollaborative } from "./playlist-utls";
 import axios from "axios";
 
@@ -18,6 +19,7 @@ export async function postPlaylist(req, res){
         }
     };
     let response = axios(authOptions).then((response) => {
+        setPlaylistID(response.data.id);
         return response.data;
     }).catch((error) => {
         console.log(`ERROR_AXIOS_REQUEST_postPlaylist: ${error.code} ${error.message}`);
