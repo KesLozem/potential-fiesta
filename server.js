@@ -41,12 +41,22 @@ instrument(io, {
 
 // Socket events
 let playbackState = {};
+// Ticker for playback position
+let ms = 0;
+let ticker = setInterval(() => {
+  ms += 1000;
+}, 1000);
 
 io.on('connection', (socket) => {
   socket.on('PlaybackState:Request', () => {
-    socket.emit('PlaybackState', playbackState);
+    // Sending correct position for those joining the party after playback has started
+    let currentPlaybackState = structuredClone(playbackState);
+    currentPlaybackState.position += ms;
+    socket.emit('PlaybackState', currentPlaybackState);
   });
   socket.on('PlaybackState:Latest', (state) => {
+    // Reset ticker if Web SDK sends state
+    ms = 0;
     playbackState = state;
     io.emit('PlaybackState', state);
   });
