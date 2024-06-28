@@ -2,6 +2,7 @@ const { getIsOnline } = require("../services/player/player-online.service");
 const { transferPlayback } = require("../services/player/transfer-playback.service");
 const { getQueue } = require("../services/player/get-queue.service");
 const { insertQueue } = require("../services/player/insert-queue.service");
+const { searchTrack } = require("../services/player/search-track.service");
 
 export async function getOnlineStatus(req, res) {
     try {
@@ -18,7 +19,7 @@ export async function putTransferDevice(req, res) {
     }
     ).catch((error) => {
         return res.status(500).send(
-            {   
+            {
                 error: {
                     status: error.status,
                     code: error.code,
@@ -34,30 +35,30 @@ export async function get_Queue(req, res) {
     try {
         const queue = await getQueue(req, res);
         return res.status(200).send(
-            { 
-            "queue": {
-                "current": {
-                    "name": queue.currently_playing.name,
-                    "artist": queue.currently_playing.artists[0].name,
-                    "album": queue.currently_playing.album.name,
-                    "image": queue.currently_playing.album.images[0].url,
-                    "uri": queue.currently_playing.id,
-                    "duration": queue.currently_playing.duration_ms,
-                    "popularity": queue.currently_playing.popularity
-                },
-                "next": queue.queue.map((track) => {
-                    return {
-                        "name": track.name,
-                        "artist": track.artists[0].name,
-                        "album": track.album.name,
-                        "image": track.album.images[0].url,
-                        "uri": track.id,
-                        "duration": track.duration_ms,
-                        "popularity": track.popularity
-                    }
-                })
-            } 
-        });
+            {
+                "queue": {
+                    "current": {
+                        "name": queue.currently_playing.name,
+                        "artist": queue.currently_playing.artists[0].name,
+                        "album": queue.currently_playing.album.name,
+                        "image": queue.currently_playing.album.images[0].url,
+                        "uri": queue.currently_playing.id,
+                        "duration": queue.currently_playing.duration_ms,
+                        "popularity": queue.currently_playing.popularity
+                    },
+                    "next": queue.queue.map((track) => {
+                        return {
+                            "name": track.name,
+                            "artist": track.artists[0].name,
+                            "album": track.album.name,
+                            "image": track.album.images[0].url,
+                            "uri": track.id,
+                            "duration": track.duration_ms,
+                            "popularity": track.popularity
+                        }
+                    })
+                }
+            });
     } catch (error) {
         return res.status(500).send(
             {
@@ -72,10 +73,42 @@ export async function get_Queue(req, res) {
     }
 }
 
-export async function insert_queue(req, res){
+export async function insert_queue(req, res) {
     try {
         const track = await insertQueue(req, res);
         return res.status(204).send({ track: track });
+    } catch (error) {
+        return res.status(500).send(
+            {
+                error: {
+                    status: error.status,
+                    code: error.code,
+                    message: error.message,
+                    request: error.config
+                }
+            }
+        );
+    }
+}
+
+export async function search_track(req, res) {
+    try {
+        const tracks = await searchTrack(req, res);
+        return res.status(200).send({
+            results: {
+                "tracks": tracks.tracks.items.map((track) => {
+                    return {
+                        "name": track.name,
+                        "artist": track.artists[0].name,
+                        "album": track.album.name,
+                        "image": track.album.images[0].url,
+                        "id": track.id,
+                        "duration": track.duration_ms,
+                        "popularity": track.popularity
+                    }
+                })
+            }
+        });
     } catch (error) {
         return res.status(500).send(
             {
