@@ -1,29 +1,56 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
+import axios from "axios";
 import CardResults from "./Card-Results";
 
 export default function SearchMain({ addSongRef, searchOpen }) {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [searchResults, setSearchResults] = useState([]); // [ {title, artist, album, image, id}, ...
+  const [loaded, setLoaded] = useState(false);
   const inputRef = useRef(null);
+
+  const sendSearchRequest = () => {
+          console.log(searchTerm);
+    axios
+      .get(`/api/player/search?q=${searchTerm}`)
+      .then((res) => {
+        console.log(res.data.results.tracks);
+        setSearchResults(res.data.results.tracks);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  }
 
   useEffect(() => {
     // Ensures that search bar is reset when add song button is clicked
     if (!addSongRef.current & !inputRef.current) return;
     addSongRef.current.addEventListener("click", () => {
-      inputRef.current.value = "";
+      inputRef.current.value = null;
     });
     return () => {
       addSongRef.current.removeEventListener("click", () => {
-        inputRef.current.value = "";
+        inputRef.current.value = null
       });
     };
   }, []);
 
   useEffect(() => {
-      if (searchOpen) {
-        // Allowing time for the drawer to open before focusing on the input
-        setTimeout(() => inputRef.current.focus(), 250);
-        inputRef.current.value = "";
-      }
-  }, [searchOpen])
+    if (searchOpen) {
+      // Allowing time for the drawer to open before focusing on the input
+      setTimeout(() => inputRef.current.focus(), 250);
+      inputRef.current.value = null
+    }
+  }, [searchOpen]);
+
+  useEffect(() => {
+    // Delay search request to prevent unnecessary API calls
+    if (!searchTerm || searchTerm == '') return;
+    const delayDebounceFn = setTimeout(() => {
+      sendSearchRequest();
+    }, 600);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [searchTerm]);
 
   return (
     <div className="flex flex-col items-center gap-y-2">
@@ -33,6 +60,7 @@ export default function SearchMain({ addSongRef, searchOpen }) {
           type="text"
           className="grow"
           placeholder="Search"
+          onChange={(e) => setSearchTerm(e.target.value)}
         />
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -47,9 +75,21 @@ export default function SearchMain({ addSongRef, searchOpen }) {
           />
         </svg>
       </label>
-      <CardResults />
-      <CardResults />
-      <CardResults />
+        {searchTerm !== '' ? (
+          <p className="text-white text-sm">Search results for "{searchTerm}"</p>
+        ) : "Start searching..."}
+       {searchResults.map(track => (
+        <CardResults
+          key={track.id}
+          title={track.name}
+          artist={track.artist}
+          album={track.album}
+          image={track.image}
+          id={track.id}
+          duration={track.duration}
+          popularity={track.popularity}
+        />
+       ))}
     </div>
   );
 }

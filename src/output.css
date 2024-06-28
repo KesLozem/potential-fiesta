@@ -1738,6 +1738,12 @@ html {
   margin-top: 0;
 }
 
+.mockup-phone .display {
+  overflow: hidden;
+  border-radius: 40px;
+  margin-top: -25px;
+}
+
 .mockup-browser .mockup-browser-toolbar .input {
   position: relative;
   margin-left: auto;
@@ -1869,6 +1875,31 @@ html {
 
   100% {
     transform: translateY(0);
+  }
+}
+
+.skeleton {
+  border-radius: var(--rounded-box, 1rem);
+  --tw-bg-opacity: 1;
+  background-color: var(--fallback-b3,oklch(var(--b3)/var(--tw-bg-opacity)));
+  will-change: background-position;
+  animation: skeleton 1.8s ease-in-out infinite;
+  background-image: linear-gradient(
+    105deg,
+    transparent 0%,
+    transparent 40%,
+    var(--fallback-b1,oklch(var(--b1)/1)) 50%,
+    transparent 60%,
+    transparent 100%
+  );
+  background-size: 200% auto;
+  background-repeat: no-repeat;
+  background-position-x: -50%;
+}
+
+@media (prefers-reduced-motion) {
+  .skeleton {
+    animation-duration: 15s;
   }
 }
 
@@ -2359,6 +2390,10 @@ html:has(.drawer-toggle:checked) {
   height: 100vh;
 }
 
+.h-32 {
+  height: 8rem;
+}
+
 .max-h-20 {
   max-height: 5rem;
 }
@@ -2492,6 +2527,10 @@ html:has(.drawer-toggle:checked) {
   width: 1%;
 }
 
+.w-32 {
+  width: 8rem;
+}
+
 .min-w-\[250px\] {
   min-width: 250px;
 }
@@ -2619,6 +2658,10 @@ html:has(.drawer-toggle:checked) {
 
 .rounded-lg {
   border-radius: 0.5rem;
+}
+
+.rounded-none {
+  border-radius: 0px;
 }
 
 .rounded-l-lg {

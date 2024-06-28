@@ -7,7 +7,20 @@ import { getTracks } from "../services/playlist/get-tracks.service";
 export async function get_playlist(req, res) {
     try {
         const playlist = await getPlaylist(req, res);
-        return res.status(200).send({ playlist: playlist });
+        return res.status(200).send({ 
+            playlist: {
+                limit: playlist.limit,
+                offset: playlist.offset,
+                total: playlist.total,
+                items: playlist.items.map((item) => {
+                    return {
+                        id: item.id,
+                        name: item.name,
+                        owner: item.owner.display_name,
+                    }
+                })
+            } 
+        });
     } catch (error) {
         return res.status(500).send(
             {
@@ -62,7 +75,24 @@ export async function add_track(req, res) {
 export async function get_tracks(req, res){
     try {
         const tracks = await getTracks(req, res);
-        return res.status(200).send({ tracks: tracks });
+        return res.status(200).send({ 
+            tracks: {
+                limit: tracks.limit,
+                offset: tracks.offset,
+                total: tracks.total,
+                items: tracks.items.map((item) => {
+                    return {
+                        id: item.track.id,
+                        name: item.track.name,
+                        artist: item.track.artists[0].name,
+                        album: item.track.album.name,
+                        image: item.track.album.images[0].url,
+                        duration: item.track.duration_ms,
+                        popularity: item.track.popularity
+                    }
+                })
+            }  
+        });
     } catch (error) {
         return res.status(500).send(
             {

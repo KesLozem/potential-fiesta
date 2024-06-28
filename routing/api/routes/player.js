@@ -13,5 +13,5 @@ router.get('/online', getOnlineStatus);
 router.put('/device', putTransferDevice);
 router.get('/queue', get_Queue);
 router.post('/queue', insert_queue);
-router.post('/search', search_track);
+router.get('/search', search_track);
 module.exports = router;
