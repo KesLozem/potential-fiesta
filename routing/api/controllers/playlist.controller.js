@@ -13,6 +13,7 @@ export async function get_playlist(req, res) {
                 limit: playlist.limit,
                 offset: playlist.offset,
                 total: playlist.total,
+                snapshot_id: playlist.snapshot_id,
                 items: playlist.items.map((item) => {
                     return {
                         id: item.id,

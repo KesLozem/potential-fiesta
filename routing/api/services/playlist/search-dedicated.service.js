@@ -1,4 +1,4 @@
-import { setPlaylistID } from "./playlist-utls";
+import { setPlaylistID, setSnapshotID } from "./playlist-utls";
 import { getPlaylist } from "./get-playlist.service";
 import { playlistName } from "./playlist-utls";
 import { postPlaylist } from "./post-newPlaylist.service";
@@ -19,6 +19,7 @@ export async function searchDedicatedPlaylist(req, res) {
             // console.log(`#${i+1}: ${playlist.items[i].name}`);
             if (playlist.items[i].name === playlistName) {
                 setPlaylistID(playlist.items[i].id);
+                setSnapshotID(playlist.items[i].snapshot_id);
                 console.log(`Playlist FOUND: ${playlist.items[i].id}`)
                 return id = playlist.items[i].id;
             }
