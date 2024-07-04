@@ -4,6 +4,7 @@ import { getSnapshotID } from "../services/playlist/playlist-utls";
 import { insertTrack } from "../services/playlist/insert-track.service";
 import { getTracks } from "../services/playlist/get-tracks.service";
 import { searchDedicatedPlaylist } from "../services/playlist/search-dedicated.service";
+import { reorderItems } from "../services/playlist/reorder-items.service";
 
 export async function get_playlist(req, res) {
     try {
@@ -111,10 +112,29 @@ export async function get_tracks(req, res){
 export async function search_dedicated_playlist(req, res){
     try {
         const id = await searchDedicatedPlaylist(req, res);
+        console.log(`Snapshot ID: ${getSnapshotID()}`)
         return res.status(200).send({
             playlist_id: id,
             snapshot_id: getSnapshotID()
         });
+    } catch (error) {
+        return res.status(500).send(
+            {
+                error: {
+                    status: error.status,
+                    code: error.code,
+                    message: error.message,
+                    request: error.config
+                }
+            }
+        );
+    }
+}
+
+export async function reorder_items(req, res){
+    try {
+        const snapshot_id = await reorderItems(req, res);
+        return res.status(204).send({ snapshot_id: snapshot_id });
     } catch (error) {
         return res.status(500).send(
             {
