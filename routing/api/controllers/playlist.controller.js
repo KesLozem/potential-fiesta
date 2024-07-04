@@ -1,6 +1,6 @@
 import { getPlaylist } from "../services/playlist/get-playlist.service";
 import { postPlaylist } from "../services/playlist/post-newPlaylist.service";
-import { setPlaylistID } from "../services/playlist/playlist-utls";
+import { getSnapshotID } from "../services/playlist/playlist-utls";
 import { insertTrack } from "../services/playlist/insert-track.service";
 import { getTracks } from "../services/playlist/get-tracks.service";
 import { searchDedicatedPlaylist } from "../services/playlist/search-dedicated.service";
@@ -113,6 +113,7 @@ export async function search_dedicated_playlist(req, res){
         const id = await searchDedicatedPlaylist(req, res);
         return res.status(200).send({
             playlist_id: id,
+            snapshot_id: getSnapshotID()
         });
     } catch (error) {
         return res.status(500).send(
