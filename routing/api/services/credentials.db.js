@@ -2,8 +2,8 @@
 // let refreshToken = '';
 let userID = '';
 
-let accessToken = 'BQDIEicdeDv-AGVevqcIKIxNB1eKaS0u1Ev98moUOgWs1mOVh8qkMg-c0hoyYGG9HFYDVz1knHEUZKvdBB-JSk5L2ULHB-iPpeUqTts3WXP6cWmoCLUaD6TToAwGKgxRq2QDRkmBWxq9NoTidjbZJ37q8tnYfL4xMwIs1iSy_L8YS6G67bxpGvzcpkt27449sG4Od8E';
-let refreshToken = '2222';
+let accessToken = ''
+let refreshToken = '';
 
 export function getAccessToken() {
     return accessToken;

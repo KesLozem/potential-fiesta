@@ -1,5 +1,5 @@
 import { getAccessToken } from "../credentials.db";
-import { getPlaylistID } from "./playlist-utls";
+import { getPlaylistID, setSnapshotID } from "./playlist-utls";
 import axios from "axios";
 
 export async function insertTrack(req, res) {
@@ -18,6 +18,7 @@ export async function insertTrack(req, res) {
         json: true
     };
     let response = axios(authOptions).then((response) => {
+        setSnapshotID(response.data.snapshot_id);
         return response.data;
     }).catch((error) => {
         console.log(`ERROR_AXIOS_REQUEST_insertTrack: ${error.code} ${error.message}`);
